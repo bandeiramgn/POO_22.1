@@ -28,27 +28,31 @@ std::vector<std::pair<int, int>> occurr(std::vector<int> vet) {
 
 std::vector<std::pair<int, int>> teams(std::vector<int> vet) {  
     std::vector<std::pair<int, int>> niveis;
-    int contador = 0;
-    for(int i=0 ; i < vet.size() ; i++){
-        for(int j=0 ; j < niveis.size() ; j++){
-            if(abs(vet[i])==abs(vet[j])){
-                contador++;
+    std::vector<int> noRepeat {};
+
+    int acc {0};
+    int prox {0};
+
+    for (auto elem : vet) {
+        if (!in(noRepeat, abs(elem))) {
+            noRepeat.push_back(elem);
+        }
+    }
+
+    for (auto i = prox; i < (int) noRepeat.size(); i++) {
+        for (int j = prox; j < (int) vet.size();j++) {
+            if (noRepeat[i] == vet[j]) {
+                acc++;
+                continue;
+            } else {
+                prox = j;
+                break;
             }
         }
-        if(contador==0){
-            niveis.push_back(std::make_pair(abs(vet[i]), 0));
-        }
-        contador = 0;
+        niveis.push_back(std::make_pair(noRepeat[i], acc));
+        acc = 0;
     }
-    for(int i=0 ; i < vet.size() ; i++){
-        for(int j=0 ; j < vet.size() ; j++){
-           if(abs(niveis[i].first)==abs(vet[j])){
-                contador++;
-            }
-        }
-        niveis[i].second = contador;
-        contador = 0;
-    }
+
     return niveis;
 }
 
