@@ -18,7 +18,7 @@ struct Car {
     }
 
     void sair() {
-        if (pass == 0) {
+        if (pass == 0) {        
             std::cout << "fail: carro já está vazio!\n";
         }
         else 

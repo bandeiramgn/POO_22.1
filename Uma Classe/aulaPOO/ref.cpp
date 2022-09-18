@@ -9,6 +9,14 @@ int main() {
 
     std::cout << *d;
 
+    {
+        int a = 6;
+        int b = a;
+        int& c = b; // Cria uma referencia c para a var b
+
+        int * d; // Crie um ponteiro para inteiro d
+        d = &b; // D recebe o endereço de b
+    }
 
     /*
         Esquerda 

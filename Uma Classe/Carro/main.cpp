@@ -56,7 +56,6 @@ struct Car {
 }
 
     std::string str() {
-        // return {};
         std::stringstream ss;
         ss << "pass: " << pass << ", gas: " << gas << ", km: " << km << "";
         return ss.str();
