@@ -80,7 +80,7 @@ public:
         else if (this->time >= time)
         {
             this->time -= time;
-        } 
+        }
         else if (this->time < time)
         {
             std::cout << "fail: time finished after " << this->time << " minutes\n";
