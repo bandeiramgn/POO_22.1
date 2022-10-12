@@ -1,7 +1,13 @@
-#include "aux.hpp"
+/*
+    Atividade bem legal, resolvida a maior parte dela em sala, achei relativamente fácil e não tomou muito tempo para termina-la. Espero continuar tendo
+    entendimento do conteúdo para conseguir avançar nas próximas atividades. Conteúdo de agregação foi bem digerido e com a prática vou conseguir ter mais
+    domínio.´
+*/
+
 #include <iostream>
-#include <memory>
 #include <sstream>
+#include <memory>
+#include <aux.hpp>
 
 class Person
 {
@@ -9,10 +15,22 @@ class Person
     int age;
 
 public:
-    Person(std::string name = "", int age = 0) : name{name}, age{age} {}
+    Person(std::string name = "", int age = 0) : name(name), age(age)
+    {
+    }
 
-    int getAge() { return this->age; }
-    std::string getName() { return name; }
+    Person(int age) : age(age)
+    {
+    }
+
+    int getAge()
+    {
+        return this->age;
+    }
+    std::string getName()
+    {
+        return this->name;
+    }
     std::string str()
     {
         std::ostringstream oss;
@@ -20,8 +38,10 @@ public:
         return oss.str();
     }
 };
-
-std::ostream &operator<<(std::ostream &os, Person &p) { return os << p.str(); }
+std::ostream &operator<<(std::ostream &os, Person &p)
+{
+    return os << p.str();
+}
 
 class Motorcycle
 {
@@ -30,7 +50,9 @@ class Motorcycle
     int power{1};
 
 public:
-    Motorcycle(int power = 1) : power{power} {}
+    Motorcycle(int power = 1) : power(power)
+    {
+    }
 
     bool insertPerson(std::shared_ptr<Person> p)
     {
@@ -39,6 +61,7 @@ public:
             person = p;
             return true;
         }
+
         std::cout << "fail: busy motorcycle\n";
         return false;
     }
@@ -50,10 +73,11 @@ public:
         {
             pot++;
         }
+
         return "P" + std::string(pot, 'e') + "m";
     }
 
-    std::shared_ptr<Person> removePerson()
+    std::shared_ptr<Person> remove()
     {
         if (person != nullptr)
         {
@@ -61,34 +85,47 @@ public:
             person = nullptr;
             return personRet;
         }
+
         std::cout << "fail: empty motorcycle\n";
         return nullptr;
     }
 
-    void buyTime(int time) { this->time = time; }
+    void buyTime(int time)
+    {
+        this->time += time;
+    }
 
     void drive(int time)
     {
-        if (person->getAge() > 10)
-        {
-            std::cout << "fail: too old to drive\n";
-        }
-        else if (this->time == 0)
+        if (this->time == 0)    // Faz o primeiro teste para saber se tem horas compradas
         {
             std::cout << "fail: buy time first\n";
+            return;
         }
-        else if (this->time >= time)
+        if (person == nullptr)  // Veririficar se tem alguma pessoa na motoca
+        {
+            std::cout << "fail: empty motorcycle\n";
+            return;
+        }
+        if (person->getAge() > 10)  // Verifica o teste da idade da criança
+        {
+            std::cout << "fail: too old to drive\n";
+            return;
+        }
+        if (this->time >= time)     // Decrementa o tempo que a criança andou
         {
             this->time -= time;
+            return;
         }
-        else if (this->time < time)
+        if (this->time < time)  // Se a criança não tem tempo suficiente, ela retorna até quanto tempo a criança andou e depois parou.
         {
             std::cout << "fail: time finished after " << this->time << " minutes\n";
             this->time = 0;
+            return;
         }
     }
 
-    std::string str() const
+    std::string str()
     {
         std::ostringstream os;
         os << "power:" << power << ", time:" << time;
@@ -97,7 +134,7 @@ public:
     }
 };
 
-std::ostream &operator<<(std::ostream &os, const Motorcycle &m)
+std::ostream &operator<<(std::ostream &os, Motorcycle m)
 {
     return os << m.str();
 }
@@ -109,14 +146,13 @@ int main()
 
     Motorcycle m(1);
 
-    auto __int = [&](int index)
-    { return aux::to<int>(param[index]); };
+    auto INT = aux::to<int>;
 
     chain["show"] = [&]()
     { aux::show << m; };
     chain["leave"] = [&]()
     {
-        auto person = m.removePerson();
+        auto person = m.remove();
         if (person != nullptr)
         {
             aux::show << *person;
@@ -125,15 +161,13 @@ int main()
     chain["honk"] = [&]()
     { aux::show << m.honk(); };
     chain["init"] = [&]()
-    { m = Motorcycle(__int(1)); };
+    { m = Motorcycle(INT(param.at(1))); };
     chain["enter"] = [&]()
-    {
-        m.insertPerson(std::make_shared<Person>(param[1], __int(2)));
-    };
+    { m.insertPerson(std::make_shared<Person>(param.at(1), INT(param.at(2)))); };
     chain["buy"] = [&]()
-    { m.buyTime(__int(1)); };
+    { m.buyTime(INT(param.at(1))); };
     chain["drive"] = [&]()
-    { m.drive(__int(1)); };
+    { m.drive(INT(param.at(1))); };
 
     aux::execute(chain, param);
 }
