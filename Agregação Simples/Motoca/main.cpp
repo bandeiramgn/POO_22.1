@@ -97,27 +97,27 @@ public:
 
     void drive(int time)
     {
-        if (this->time == 0)    // Faz o primeiro teste para saber se tem horas compradas
+        if (this->time == 0) // Faz o primeiro teste para saber se tem horas compradas
         {
             std::cout << "fail: buy time first\n";
             return;
         }
-        if (person == nullptr)  // Veririficar se tem alguma pessoa na motoca
+        if (person == nullptr) // Veririficar se tem alguma pessoa na motoca
         {
             std::cout << "fail: empty motorcycle\n";
             return;
         }
-        if (person->getAge() > 10)  // Verifica o teste da idade da criança
+        if (person->getAge() > 10) // Verifica o teste da idade da criança
         {
             std::cout << "fail: too old to drive\n";
             return;
         }
-        if (this->time >= time)     // Decrementa o tempo que a criança andou
+        if (this->time >= time) // Decrementa o tempo que a criança andou
         {
             this->time -= time;
             return;
         }
-        if (this->time < time)  // Se a criança não tem tempo suficiente, ela retorna até quanto tempo a criança andou e depois parou.
+        if (this->time < time) // Se a criança não tem tempo suficiente, ela retorna até quanto tempo a criança andou e depois parou.
         {
             std::cout << "fail: time finished after " << this->time << " minutes\n";
             this->time = 0;
