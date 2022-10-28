@@ -18,14 +18,13 @@ public:
 
     int usagePerSheet() const
     {
-        if (getHardness() == "HB") 
+        if (getHardness() == "HB")
         {
             return 1;
         }
         else if (hardness == "2B")
         {
             return 2;
-            
         }
         else if (hardness == "4B")
         {
@@ -34,10 +33,10 @@ public:
         else if (hardness == "6B")
         {
             return 6;
-        }  
+        }
         return 0;
     }
-        
+
     float getThickness() const
     {
         return thickness;
@@ -45,7 +44,7 @@ public:
 
     std::string getHardness() const
     {
-        return hardness; 
+        return hardness;
     }
 
     int getSize() const
@@ -62,7 +61,7 @@ public:
     {
         std::stringstream ss;
         ss << std::fixed << std::setprecision(1)
-            << thickness << ":" << hardness << ":" << size;
+           << thickness << ":" << hardness << ":" << size;
         return ss.str();
     }
 };
@@ -79,7 +78,6 @@ struct Pencil
 
     Pencil(float thickness = 0.0) : thickness(thickness), tip(nullptr)
     {
-
     }
 
     bool hasGrafite()
@@ -87,22 +85,23 @@ struct Pencil
         if (tip == nullptr)
             return false;
 
-        return true; 
+        return true;
     }
 
     bool insert(std::shared_ptr<Lead> grafite)
     {
-        if (hasGrafite()){
+        if (hasGrafite())
+        {
             std::cout << "fail: ja existe grafite\n";
             return false;
         }
 
-        if (grafite->getThickness() == thickness) 
+        if (grafite->getThickness() == thickness)
         {
             tip = grafite;
             return true;
-        } 
-        else 
+        }
+        else
         {
             std::cout << "fail: calibre incompativel\n";
             return false;
@@ -111,15 +110,16 @@ struct Pencil
         return false;
     }
 
-    std::shared_ptr<Lead> remove() {
-        if (hasGrafite()) 
+    std::shared_ptr<Lead> remove()
+    {
+        if (hasGrafite())
         {
-            tip = nullptr;        
+            tip = nullptr;
         }
-        else 
+        else
         {
             std::cout << "fail: não tem grafite\n";
-        } 
+        }
         return {};
     }
 
@@ -129,21 +129,21 @@ struct Pencil
         {
             std::cout << "fail: nao existe grafite\n";
         }
-        else if (tip->getSize() <= 10) 
+        else if (tip->getSize() <= 10)
         {
             std::cout << "fail: tamanho insuficiente\n";
-        } 
+        }
         else if (hasGrafite())
         {
-            int useGrafite = tip->usagePerSheet();   
-            if ((tip->getSize() - useGrafite) < 10) 
-            { 
+            int useGrafite = tip->usagePerSheet();
+            if ((tip->getSize() - useGrafite) < 10)
+            {
                 tip->setSize(10);
                 std::cout << "fail: folha incompleta\n";
             }
-            else 
+            else
             {
-                tip->setSize(tip->getSize() - useGrafite); 
+                tip->setSize(tip->getSize() - useGrafite);
             }
         }
     }

@@ -4,7 +4,6 @@
 
 
 struct Car {
-
     int pass {0};
     int passMax {2};
     int gas {0};
