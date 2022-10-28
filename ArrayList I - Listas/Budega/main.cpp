@@ -36,9 +36,10 @@ class Mercantil
 
     bool validarIndice(int indice)
     {
-        if (indice < 0 || indice > (int)this->boxs.size())
+        if (indice < 0 || indice >= (int)this->boxs.size())
+        {
             return false;
-
+        }
         return true;
     }
 
@@ -65,15 +66,16 @@ public:
 
         if (this->esperando.empty())
         {
+            std::cout << "fail: sem clientes\n";
             return false;
         }
 
-        if (this->boxs[indice] != nullptr) 
+        if (this->boxs[indice] != nullptr)
         {
             std::cout << "fail: caixa ocupado\n";
             return false;
         }
-        
+
         if (this->boxs[indice] == nullptr)
         {
             this->boxs[indice] = this->esperando.front();
@@ -85,20 +87,26 @@ public:
 
     std::shared_ptr<Pessoa> finalizar(int indice)
     {
+        if (validarIndice(indice) && this->boxs[indice] != nullptr)
+        {
+            auto person = this->boxs[indice];
+            this->boxs[indice] = nullptr;
+            return person;
+        }
+
+        if (validarIndice(indice) && this->boxs[indice] == nullptr)
+        {
+            std::cout << "fail: caixa vazio\n";
+            return {};
+        }
+
         if (!validarIndice(indice))
         {
             std::cout << "fail: caixa inexistente\n";
-            return{};
+            return {};
         }
-        if (this->boxs[indice] != nullptr)
-        {
-            this->boxs[indice] = nullptr;
-        }
-        else
-        {
-            std::cout << "fail: caixa vazio\n";
-        }
-        return{};
+
+        return {};
     }
 
     std::string str() const
@@ -107,12 +115,12 @@ public:
         auto fn = [&i](auto p)
         {
             std::stringstream ss;
-            ss << " " << i++ << ":" << std::setw(5) << (p == nullptr ? "-----" : p->getNome()) << " ";
+            ss << " " << i++ << ":" << (p == nullptr ? "-----" : p->getNome()) << " ";
             return ss.str();
         };
         std::stringstream os;
-        os << "boxs: |" << (boxs | aux::MAP(fn) | aux::JOIN("|")) << "|\n"
-            << "Espera: " << (esperando | aux::MAP(FX(*x)) | aux::FMT());
+        os << "Caixas: |" << (boxs | aux::MAP(fn) | aux::JOIN("|")) << "|\n"
+           << "Espera: " << (esperando | aux::MAP(LAMBDA(x, *x)) | aux::FMT());
         return os.str();
     }
 };
@@ -138,7 +146,7 @@ int main()
     chain["arrive"] = [&]()
     { bank.chegar(std::make_shared<Pessoa>(par[1])); };
     chain["show"] = [&]()
-    { aux::show << bank; };
+    { std::cout << bank << '\n'; };
 
     aux::execute(chain, par);
 }
