@@ -4,6 +4,7 @@
 
 
 struct Car {
+
     int pass {0};
     int passMax {2};
     int gas {0};
@@ -35,6 +36,7 @@ struct Car {
     }
 
     void drive(int km){   
+        
         if (pass == 0) {
             std::cout << "fail: nao ha ninguem no carro\n";
         } else if (pass >= 1 && gas >= km)  {
@@ -55,6 +57,7 @@ struct Car {
 }
 
     std::string str() {
+        // return {};
         std::stringstream ss;
         ss << "pass: " << pass << ", gas: " << gas << ", km: " << km << "";
         return ss.str();
@@ -67,12 +70,13 @@ int main() {
 
     Car car;
 
-    chain["help"]  = [&](){ aux::show << "show; enter; leave; fuel _gas; drive _km; end"; };
-    chain["show"]  = [&](){ aux::show << car.str(); };
+    auto par2int   = LAMBDAE(&ui, index, ui.at(index) | aux::STR2<int>()); //converte de string para int
+
+    chain["show"]  = [&](){ car.str() | aux::PRINT(); };
     chain["enter"] = [&](){ car.enter(); };
     chain["leave"] = [&](){ car.leave(); };
-    chain["fuel"]  = [&](){ car.fuel(aux::to<int>(ui[1])); };
-    chain["drive"] = [&](){ car.drive(aux::to<int>(ui[1])); };
+    chain["fuel"]  = [&](){ car.fuel(par2int(1)); };
+    chain["drive"] = [&](){car.drive(par2int(1)); };
 
     aux::execute(chain, ui);
 }

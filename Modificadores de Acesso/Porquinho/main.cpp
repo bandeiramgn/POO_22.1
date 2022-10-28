@@ -1,36 +1,70 @@
+/*
+    Atividade mais desafiadora que as demais, porém, bem legal de se fazer. Demorei cerca de 3 horas para fazer ela usando alguns conceitos ensinados até agora como pro exemplo
+    usando o stringstream.
+
+    Tentei deixar a atividade o melhor indentada possível para facilitar o entendimento dos códigos.
+*/
+
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <iomanip>
 #include <aux.hpp>
 
-enum Coin
+enum Cents
 {
-    M10,
-    M25,
-    M50,
-    M100
+    C10,
+    C25,
+    C50,
+    C100
 };
-struct CoinDef
+
+class Coin
 {
     float value;
     int volume;
-};
+    std::string label;
 
-CoinDef getDef(Coin coin)
-{
-    switch (coin)
+public:
+    Coin(Cents v)
     {
-    case M10:
-        return {0.1, 1};
-    case M25:
-        return {0.25, 2};
-    case M50:
-        return {0.50, 3};
-    case M100:
-        return {1, 4};
+        switch (v)
+        {
+        case C10:
+            value = 0.10;
+            volume = 1;
+            label = "C10";
+            break;
+        case C25:
+            value = 0.25;
+            volume = 2;
+            label = "C25";
+            break;
+        case C50:
+            value = 0.50;
+            volume = 3;
+            label = "C50";
+            break;
+        case C100:
+            value = 1.0;
+            volume = 4;
+            label = "C100";
+            break;
+        }
     }
-    return {0, 0};
-}
+    float getValue() const
+    {
+        return value;
+    }
+    int getVolume() const
+    {
+        return volume;
+    }
+    std::string getLabel() const
+    {
+        return label;
+    }
+};
 
 class Item
 {
@@ -41,22 +75,27 @@ public:
     Item(std::string label, int volume) : label(label), volume(volume)
     {
     }
+
     int getVolume() const
     {
         return volume;
     }
+
     std::string getLabel() const
     {
         return label;
     }
+
     void setVolume(int volume)
     {
         this->volume = volume;
     }
+
     void setLabel(std::string label)
     {
         this->label = label;
     }
+
     std::string str() const
     {
         return {}; // todo
@@ -86,8 +125,8 @@ public:
 
     bool addCoin(Coin coin)
     {
-        int volCoin = getDef(coin).volume;
-        float valCoin = getDef(coin).value;
+        int volCoin = coin.getVolume();
+        float valCoin = coin.getValue();
 
         if (!broken && this->volume < volumeMax)
         {
@@ -148,7 +187,7 @@ public:
 
     double getCoins()
     {
-        double valueReceived {0.0};
+        double valueReceived{0.0};
         if (broken)
         {
             valueReceived = value;
@@ -170,7 +209,7 @@ public:
             std::stringstream ss;
 
             ss << "[";
-            for (int i = 0; i < (int) itens.size();i++)
+            for (int i = 0; i < (int)itens.size(); i++)
             {
                 ss << (i == 0 ? "" : ", ") << itens[i];
             }
@@ -185,16 +224,16 @@ public:
             std::cout << "fail: you must break the pig first\n";
             return "[]";
         }
-        return "[]"; 
+        return "[]";
     }
 
     std::string str() const
     {
         std::stringstream ss;
-        ss << aux::fmt(this->itens) << " : "
-            << aux::fmt(value) << "$ : "
-            << volume << "/" << volumeMax << " : "
-            << (broken ? "broken" : "unbroken");
+        ss << (this->itens | aux::FMT()) << " : "
+           << std::fixed << std::setprecision(2) << value << "$ : "
+           << volume << "/" << volumeMax << " : "
+           << (broken ? "broken" : "unbroken");
         return ss.str();
     }
 };
@@ -211,18 +250,19 @@ int main()
 
     Pig pig;
 
-    auto toint = aux::to<int>;
+    auto toint = aux::STR2<int>();
+    auto fmtdouble = aux::PIPE(LAMBDA(x, x | aux::STR("%.2f")));
 
     chain["addCoin"] = [&]()
     {
         if (par[1] == "10")
-            pig.addCoin(M10);
+            pig.addCoin(Coin(C10));
         else if (par[1] == "25")
-            pig.addCoin(M25);
+            pig.addCoin(Coin(C25));
         else if (par[1] == "50")
-            pig.addCoin(M50);
+            pig.addCoin(Coin(C50));
         else if (par[1] == "100")
-            pig.addCoin(M100);
+            pig.addCoin(Coin(C100));
     };
     chain["init"] = [&]()
     { pig = Pig(toint(par[1])); };
@@ -231,11 +271,11 @@ int main()
     chain["break"] = [&]()
     { pig.breakPig(); };
     chain["getCoins"] = [&]()
-    { aux::show << pig.getCoins(); };
-    chain["getItens"] = [&]()
-    { aux::show << pig.getItens(); };
+    { pig.getCoins() | fmtdouble | aux::PRINT(); };
+    chain["getItems"] = [&]()
+    { pig.getItems() | aux::PRINT(); };
     chain["show"] = [&]()
-    { aux::show << pig.str(); };
+    { pig.str() | aux::PRINT(); };
 
     aux::execute(chain, par);
 }
