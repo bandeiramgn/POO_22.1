@@ -1,8 +1,3 @@
-/*
-    Atividade bem legal, resolvida a maior parte dela em sala, achei relativamente fácil e não tomou muito tempo para termina-la. Espero continuar tendo
-    entendimento do conteúdo para conseguir avançar nas próximas atividades. Conteúdo de agregação foi bem digerido e com a prática vou conseguir ter mais
-    domínio.´
-*/
 
 #include <iostream>
 #include <sstream>
@@ -97,27 +92,27 @@ public:
 
     void drive(int time)
     {
-        if (this->time == 0) // Faz o primeiro teste para saber se tem horas compradas
+        if (this->time == 0)
         {
             std::cout << "fail: buy time first\n";
             return;
         }
-        if (person == nullptr) // Veririficar se tem alguma pessoa na motoca
+        if (person == nullptr)
         {
             std::cout << "fail: empty motorcycle\n";
             return;
         }
-        if (person->getAge() > 10) // Verifica o teste da idade da criança
+        if (person->getAge() > 10)
         {
             std::cout << "fail: too old to drive\n";
             return;
         }
-        if (this->time >= time) // Decrementa o tempo que a criança andou
+        if (this->time >= time)
         {
             this->time -= time;
             return;
         }
-        if (this->time < time) // Se a criança não tem tempo suficiente, ela retorna até quanto tempo a criança andou e depois parou.
+        if (this->time < time)
         {
             std::cout << "fail: time finished after " << this->time << " minutes\n";
             this->time = 0;
@@ -149,17 +144,17 @@ int main()
     auto INT = aux::to<int>;
 
     chain["show"] = [&]()
-    { aux::show << m; };
+    { m | aux::PRINT(); };
     chain["leave"] = [&]()
     {
         auto person = m.remove();
         if (person != nullptr)
         {
-            aux::show << *person;
+            *person | aux::PRINT();
         }
     };
     chain["honk"] = [&]()
-    { aux::show << m.honk(); };
+    { m.honk() | aux::PRINT(); };
     chain["init"] = [&]()
     { m = Motorcycle(INT(param.at(1))); };
     chain["enter"] = [&]()
