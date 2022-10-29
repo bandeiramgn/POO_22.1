@@ -39,7 +39,36 @@ class Trampoline {
     std::list<PtrKid> playing;
     
     PtrKid removeFromList(std::string name, std::list<PtrKid>& lista) {
-        return {};
+        for(auto it = lista.begin(); it != lista.end();it++) {
+            auto kid = *it;
+            if(kid->getName() == name) {
+                lista.erase(it);
+                return kid;
+            }
+        }
+        return {};        
+        // for (auto kidSearch : lista) {
+        //     if (kidSearch == name->getName()) {
+        //         auto kid = kidSearch;
+        //         lista.remove(lista.begin(), lista.end(), kidSearch);
+        //         return kid;
+        //     }
+        //     else {
+        //         return{};
+        //     }
+        // }
+        
+        // auto it = std::find(lista.begin(), lista.end(), name);
+
+        // if (kid == lista.end()) {
+        //     std::cout << "fail: crianca não está na lista\n";
+        //     return;
+        // } else {
+        //     auto kid = *it;
+        //     lista.erase(*it);
+        //     return kid;
+        // }
+        // return {};
     }
 
 public:
@@ -47,17 +76,34 @@ public:
     }
     
     void arrive(PtrKid kid) {
-        waiting.push_back(kid);
+        waiting.push_front(kid);
     }
 
     void enter() {
+        if (waiting.empty()) {
+            // std::cout << "fail: lista de espera está vazia!\n";
+            return;
+        }
+        
+        auto it = waiting.back();
+        waiting.pop_back();
+
+        playing.push_front(it);
     }
 
     void leave() {
+        if (playing.empty()) {
+            // std::cout << "fail: lista de\n";
+            return;
+        }
+        auto kid = playing.back();
+        removeFromList(kid->getName(), playing);
+        waiting.push_front(kid);
+        return;
     }
 
     PtrKid removeKid(std::string name) {
-        return {};
+        return (removeFromList(name, waiting), removeFromList(name, playing));
     }
 
     std::string str() {
