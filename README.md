@@ -1,1 +1,1 @@
-# Repositório destinado as atividades e trabalhos da disciplina de Programação Orientada a Objetos
+# Disciplina de Programação Orientada a Objetos 2022.2
