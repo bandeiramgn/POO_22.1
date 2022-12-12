@@ -167,7 +167,6 @@ public:
 
     std::string str() const
     {
-
         std::stringstream ss;
         std::string prefix = "[";
         std::string suffix = "]";
